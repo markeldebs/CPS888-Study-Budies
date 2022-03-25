@@ -27,5 +27,11 @@ app.post('/tshirt/:id', (req, res) => {
         res.status(418).send({message: 'We need a logo!'})
     }
 
+
+
 });
 
+app.get("/", (req, res) => {
+    res.send("SERVER IS RUNNING");
+  });
+  
