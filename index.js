@@ -7,7 +7,7 @@ const PORT = 8082;
 
 //Set up Routing for auth.js
 const auth = require('./routes/auth');
-app.use('/auth', auth);
+app.use('', auth);
 
 
 app.listen(
