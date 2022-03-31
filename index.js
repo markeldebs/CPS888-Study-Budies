@@ -1,13 +1,19 @@
 const express = require('express');
+const app = express();
 
-const app = require('express')();
+app.use(express.json());
+
 const PORT = 8082;
+
+//Set up Routing for auth.js
+const auth = require('./routes/auth');
+app.use('/auth', auth);
+
 
 app.listen(
     PORT,
     () => console.log(`it's alive on http://localhost:${PORT}`)
 )
-
 
 app.get('/tshirt', (req, res) => {
     res.status(200).send({
@@ -15,8 +21,6 @@ app.get('/tshirt', (req, res) => {
         size: 'Large'
     })
 });
-
-app.use(express.json())
 
 app.post('/tshirt/:id', (req, res) => {
 
@@ -32,4 +36,4 @@ app.post('/tshirt/:id', (req, res) => {
 app.get("/", (req, res) => {
     res.send("SERVER IS RUNNING");
   });
-  
+
