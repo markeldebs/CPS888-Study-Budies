@@ -1,7 +1,8 @@
 const users = [
     {
         "email": "shant@study.com",
-        "password": "shanto"
+        "password": "shanto",
+        "type": "parent"
     }
 ]
 

@@ -1,3 +1,5 @@
+//Authentication Routes (signup and login)
+
 const router = require('express').Router();
 const { check, validationResult } = require("express-validator");
 const JWT = require("jsonwebtoken");
@@ -12,7 +14,7 @@ router.post('/signup',[
     check("password", "Please input a password with a minimum length of 6 characters.")
         .isLength({min: 6})
 ], async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password, type } = req.body;
     
     const errors = validationResult(req);
     
@@ -44,13 +46,15 @@ router.post('/signup',[
     // Store user to db
     users.push({
         email,
-        password: hashedPassword
+        password: hashedPassword,
+        type
     });
 
     const token = await JWT.sign({ email }, "secret-key-studybuddies", {expiresIn: 360000});
 
     res.json({
-        token
+        token,
+        message: "True"
     })
 
 });

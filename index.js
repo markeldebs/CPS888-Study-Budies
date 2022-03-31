@@ -9,6 +9,9 @@ const PORT = 8082;
 const auth = require('./routes/auth');
 app.use('', auth);
 
+//Set up Routing for application.js
+const application = require('./routes/application');
+app.use('', application);
 
 app.listen(
     PORT,
