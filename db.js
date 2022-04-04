@@ -11,7 +11,7 @@ module.exports = {
 }
 
 
-
+/*   THIS QUERY WORK PERFECTLY LOCALLY BUT IT BROKE WHEN DEPLOYING BECUASE IS A RECURSIVE TEST THAT DOESN'T EXIT
 const { Pool } = require('pg');
 
 const pool = new Pool({
@@ -43,3 +43,4 @@ pool.query('SELECT "FirstName" FROM "Parent"', (err, result) => {
 
 module.exports = pool;
 
+*/
