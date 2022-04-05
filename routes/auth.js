@@ -46,9 +46,9 @@ router.post("/signup", async (req, res) => {
     if (res.rows[0] != undefined) {
       console.log(res.rows[0]);
       console.log("User already exists");
-      userexists = 1;
+      userexists = true;
     } else {
-      userexists = 0;
+      userexists = false;
     }
   });
   //promise
@@ -66,7 +66,7 @@ router.post("/signup", async (req, res) => {
     //console.log(err.stack)
   }
 
-  if (userexists == 0) {
+  if (!userexists) { // if user does not exist
     // Hash the password
     //const hashedPassword = await bcrypt.hash(password, 10);
 
