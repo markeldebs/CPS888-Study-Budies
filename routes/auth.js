@@ -166,12 +166,12 @@ router.post("/signup", async (req, res) => {
     //response
     res.json({
       token,
-      message: "True",
+      message: true,
     });
   } else {
     //response
     res.json({
-      message: "False",
+      message: false,
     });
   }
 });
