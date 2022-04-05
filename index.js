@@ -13,6 +13,13 @@ app.use('', auth);
 const application = require('./routes/application');
 app.use('', application);
 
+const cors = require("cors");
+app.use(
+    cors({
+        origin: "*",
+    })
+);
+
 app.listen(
     PORT,
     () => console.log(`it's alive on http://localhost:${PORT}`)
@@ -39,4 +46,3 @@ app.post('/tshirt/:id', (req, res) => {
 app.get("/", (req, res) => {
     res.send("SERVER IS RUNNING");
   });
-  

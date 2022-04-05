@@ -5,23 +5,6 @@ const checkAuth = require("../checkAuth.js");
 
 
 //empty routes that check auth beofore starting 
-router.get('/parent', checkAuth, (req, res) => {
-    const {  
-        firstName,
-        lastName,
-        phoneNumber,
-        email,
-        address,
-        relation,
-        city,
-        province 
-    } = req.body
-
-    res.json({
-        message: "private message"
-    })
-});
-
 router.get('/student', checkAuth, (req, res) => {
     const {  
         firstName,
