@@ -37,7 +37,7 @@ router.post("/signup", async (req, res) => {
   const text = 'SELECT 1 FROM "Client" WHERE "Username" = \'' + username + "'";
   console.log(text);
 
-  pool.query(text, (err, res) => {
+  await pool.query(text, (err, res) => {
     if (err) {
       //console.log(err.stack)
     } else {
@@ -52,7 +52,7 @@ router.post("/signup", async (req, res) => {
     }
   });
   //promise
-  pool
+  await pool
     .query(text)
     .then((res) => {
       console.log(res.rows[0]);
@@ -66,7 +66,8 @@ router.post("/signup", async (req, res) => {
     //console.log(err.stack)
   }
 
-  if (!userexists) { // if user does not exist
+  if (!userexists) {
+    // if user does not exist
     // Hash the password
     //const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -83,7 +84,7 @@ router.post("/signup", async (req, res) => {
       }
     });
     // promise
-    pool
+    await pool
       .query(text, values)
       .then((res) => {
         console.log(res.rows[0]);
