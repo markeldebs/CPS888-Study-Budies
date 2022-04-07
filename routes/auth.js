@@ -105,7 +105,7 @@ router.post("/signup", async (req, res) => {
       'INSERT INTO "Address"("Address_ID", "Home Address", "City", "Province", "PostalCode") VALUES((SELECT MAX("Address_ID")+1 FROM "Address"), $1, $2, $3,$4)';
     const values1 = [address, city, province, postalCode];
     // callback
-    pool.query(text1, values1, (err, res) => {
+    await pool.query(text1, values1, (err, res) => {
       if (err) {
         //console.log(err.stack)
       } else {
@@ -134,7 +134,7 @@ router.post("/signup", async (req, res) => {
         'INSERT INTO "Parent" ("Parent_ID", "Client_ID", "FirstName", "LastName", "PhoneNumber", "ParentsEmailAddress", "Address_ID", "StudentRelationship") VALUES((SELECT MAX("Parent_ID")+1 FROM "Parent"), (SELECT MAX("Client_ID") FROM "Client"), $1, $2, $3, $4, (SELECT MAX("Address_ID") FROM "Address"), $5)';
       const values2 = [firstName, lastName, phoneNumber, email, relation];
       // callback
-      pool.query(text2, values2, (err, res) => {
+      await pool.query(text2, values2, (err, res) => {
         if (err) {
           //console.log(err.stack)
         } else {
@@ -172,7 +172,7 @@ router.post("/signup", async (req, res) => {
         isPaid,
       ];
       // callback
-      pool.query(text3, values3, (err, res) => {
+      await pool.query(text3, values3, (err, res) => {
         if (err) {
           //console.log(err.stack)
         } else {
@@ -262,7 +262,7 @@ router.post("/login", async (req, res) => {
       username +
       "'";
     console.log(query7);
-    pool.query(query7, (err, res) => {
+    await pool.query(query7, (err, res) => {
       if (err) {
         console.log(err.stack);
         rows = res.rows[0];
@@ -318,7 +318,7 @@ router.post("/login", async (req, res) => {
 
 //   query7 = 'SELECT 1 FROM \"Parent\", \"Client\" WHERE \"Parent\".\"Client_ID\" = \"Client\".\"Client_ID\" AND \"Username\" = \'user1433\'';
 //   console.log(query7);
-//   pool.query(query7, (err, res) => {
+//   await pool.query(query7, (err, res) => {
 //     if (err) {
 //       console.log(err.stack);
 //     } else {

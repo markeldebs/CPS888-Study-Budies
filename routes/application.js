@@ -36,7 +36,7 @@ router.post('/student', async (req, res) => {
     const text7 =
         'INSERT INTO "Student" ("Student_ID","Parent_ID","FirstName","LastName","StudentEmailAddress", "BirthDate", "Gender", "Allergies", "Grade") VALUES((SELECT MAX("Student_ID")+1 FROM "Student"), (SELECT "Parent_ID" FROM "Parent", "Client" WHERE "Parent"."Client_ID" = "Client"."Client_ID" AND "Username" = $1), $2, $3, $4, $5, $6, $7, $8)';
     const values7 = [username, firstName, lastName, email, birthdate, gender, allergies, grade];
-    pool.query(text7, values7, (err, res) => {
+    await pool.query(text7, values7, (err, res) => {
         if (err) {
           //console.log(err.stack)
         } else {
@@ -93,7 +93,7 @@ router.get('/tutor', checkAuth, (req, res) => {
 
 //   query7 = 'SELECT "Parent_ID" FROM \"Parent\", \"Client\" WHERE \"Parent\".\"Client_ID\" = \"Client\".\"Client_ID\" AND \"Username\" = \'test@test.com\'';
 //   console.log(query7);
-//   pool.query(query7, (err, res) => {
+//   await pool.query(query7, (err, res) => {
 //     if (err) {
 //       console.log(err.stack);
 //     } else {
