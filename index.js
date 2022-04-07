@@ -43,6 +43,10 @@ app.use("", auth);
 const application = require("./routes/application");
 app.use("", application);
 
+//Set up Routing for shant.js
+const shant = require("./routes/shant");
+app.use("", shant);
+
 app.listen(PORT, () => console.log(`it's alive on http://localhost:${PORT}`));
 
 app.get("/tshirt", (req, res) => {

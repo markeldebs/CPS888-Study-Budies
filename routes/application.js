@@ -11,7 +11,6 @@ const pool = new Pool({
   });
 
 const router = require('express').Router();
-const checkAuth = require("../checkAuth.js");
 
 //empty routes that check auth beofore starting 
 
@@ -121,31 +120,6 @@ router.post('/pickup', async (req, res) => {
             }
         }
     }) 
-});
-
-
-
-
-router.get('/tutor', checkAuth, (req, res) => {
-    const {  
-        firstName,
-        lastName,
-        phoneNumber,
-        email,
-        birthdate,
-        gender,
-        allergies,
-        address,
-        city,
-        province,
-        wasTutor,
-        eligibleToWork,
-        over18 
-    } = req.body
-    
-    res.json({
-        message: "private message"
-    })
 });
 
 
