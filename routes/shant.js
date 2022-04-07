@@ -64,43 +64,48 @@ router.post('/student', async (req, res) => {
 
 //course search route 
 router.post('/courseSearch', async (req, res) => {
-  const {
-      isPaid,
-      isOnline,
-      isGroup,
-      grade,
-      subject,
-      token
-  } = req.body
+    const {
+        isPaid,
+        isOnline,
+        isGroup,
+        grade,
+        subject,
+        token
+    } = req.body
 
-  const text7 =
-  'SELECT * FROM "ClassesAvailable" WHERE "TutoringService" = $1 AND "Subject" = $2 AND "ServiceForm" = $3 AND "PackageChosen" = $4';
-const values7 = [isPaid, subject, isOnline,];
-await pool.query(text7, values7, (err, res) => {
-  if (err) {
-    //console.log(err.stack)
-  } else {
-    console.log(res.rows[0]);
-  }
-});
-// promise
-await pool
-  .query(text7, values7)
-  .then((res) => {
-    console.log(res.rows[0]);
-  })
-  .catch((e) => console.error(e.stack));
-// async/await
-try {
-  const res = await pool.query(text7, values7);
-  console.log(res.rows[0]);
-} catch (err) {
-  //console.log(err.stack)
-}
+    if (isPaid == true) { isPaids = "Paid"; } else { isPaids = "Free"; }
+    if (isOnline == true) {isOnlines = "Online";} else {isOnlines = "In Person";}
+    if (isGroup == true) {isGroups = "Group";} else {isGroups = "Solo";}
 
-  res.json({
-      message: "True"
-  })
+    const text8 =
+        'SELECT * FROM "ClassesAvailable" WHERE "TutoringService" = $1 AND "Subject" = $2 AND "ServiceForm" = $3 AND "PackageChosen" = $4';
+    const values8 = [isPaids, subject, isOnlines, isGroups];
+    await pool.query(text8, values8, (err, res) => {
+        if (err) {
+            //console.log(err.stack)
+        } else {
+            console.log(res.rows[0]);
+            availableCourses = res.rows;
+        }
+    });
+    // promise
+    await pool
+        .query(text8, values8)
+        .then((res) => {
+            console.log(res.rows[0]);
+        })
+        .catch((e) => console.error(e.stack));
+    // async/await
+    try {
+        const res = await pool.query(text8, values8);
+        console.log(res.rows[0]);
+    } catch (err) {
+        //console.log(err.stack)
+    }
+
+    res.json({
+        availableCourses
+    })
 });
 
 
