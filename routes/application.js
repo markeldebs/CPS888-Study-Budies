@@ -18,13 +18,18 @@ router.post('/dropoff', async (req, res) => {
     const {  
         firstName,
         lastName,
-        parentEmail,
+        token,
         day,
         time,
         
         
     } = req.body
     
+  //authenticate user
+  const jwtuser = await jwt.verify(token, "secret-key-studybuddies")
+  parentEmail = jwtuser.username;
+
+
   //const values2 = [ran, firstName, lastName, parentEmail, day, time];
     
     const ran = [Math.floor(Math.random() * 1000)];

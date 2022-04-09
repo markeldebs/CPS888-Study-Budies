@@ -85,6 +85,8 @@ router.post('/courseSearch', async (req, res) => {
     const text8 =
         'SELECT * FROM "ClassesAvailable" WHERE "TutoringService" = $1 AND "Subject" = $2 AND "ServiceForm" = $3 AND "PackageChosen" = $4';
     const values8 = [isPaids, subject, isOnlines, isGroups];
+    console.log(text8, values8)
+
     await pool.query(text8, values8, (err, res) => {
         if (err) {
             //console.log(err.stack)
@@ -217,7 +219,7 @@ router.post('/dashboard', async (req, res) => {
             .catch(e => console.error(e.stack))
 
 
-            
+
 
         //get results
         const query3 = {
