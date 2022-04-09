@@ -181,6 +181,113 @@ router.post('/enrollment', async (req, res) => {
     })
 });
 
+//dashboard route 
+router.post('/dashboard', async (req, res) => {
+    const {
+        parentEmail,
+        tutorEmail,
+        Token,
+    } = req.body
+
+    //authenticate user
+    const jwtuser = await jwt.verify(Token, "secret-key-studybuddies")
+
+    //parent or tutor
+    if (parentEmail != null) {
+        //parent
+
+        //get parent id
+        const query2 = {
+            text: 'SELECT "Parent_ID" FROM "Parent" WHERE "ParentsEmailAddress" = $1',
+            values: [parentEmail],
+        }
+        // callback
+        pool.query(query2, (err, res) => {
+            if (err) {
+                console.log(err.stack)
+            } else {
+                console.log(res.rows[0]);
+                parentID = res.rows[0].Parent_ID;
+            }
+        })
+        // promise
+        await pool
+            .query(query2)
+            .then(res => console.log(res.rows[0]))
+            .catch(e => console.error(e.stack))
+
+
+            
+
+        //get results
+        const query3 = {
+            text: 'SELECT "FirstName", "LastName", "Subject", "ServiceForm", "PackageChosen", "AvailableTimeSlots" FROM "Student" JOIN "SubjectRegistration" USING ("Student_ID") WHERE "Parent_ID" = $1',
+            values: [parentID],
+        }
+        // callback
+        pool.query(query3, (err, res) => {
+            if (err) {
+                console.log(err.stack)
+            } else {
+                console.log(res.rows[0]);
+                results = res.rows;
+            }
+        })
+        // promise
+        await pool
+            .query(query3)
+            .then(res => console.log(res.rows[0]))
+            .catch(e => console.error(e.stack))
+
+
+        res.json({
+            results
+        })
+
+
+    } else if (tutorEmail != null) {
+        //tutor
+
+        //get results
+        const query4 = {
+            text: 'SELECT "TutoringService", "Subject", "ServiceForm", "PackageChosen", "AvailableSlots"  FROM "ClassesAvailable" JOIN "TutorClassesRegistration" USING("ClassesAvailable_ID") JOIN "Tutor" USING ("Tutor_ID") WHERE "Tutor_Email" = $1',
+            values: [tutorEmail],
+        }
+        // callback
+        pool.query(query4, (err, res) => {
+            if (err) {
+                console.log(err.stack)
+            } else {
+                console.log(res.rows[0]);
+                scheduledSessions = res.rows;
+            }
+        })
+        // promise
+        await pool
+            .query(query4)
+            .then(res => console.log(res.rows[0]))
+            .catch(e => console.error(e.stack))
+
+
+        res.json({
+            scheduledSessions
+        })
+
+    } else {
+        //neither parent nor tutor
+        res.json({
+            message: "False"
+        })
+    }
+
+
+
+
+
+});
+
+
+
 // //testing route
 // router.post("/test", async (req, res) => {
 //   // callback
