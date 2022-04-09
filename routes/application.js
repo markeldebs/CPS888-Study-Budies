@@ -1,6 +1,7 @@
 //routes for parent student tutor application
 const { RANDOM } = require('mysql/lib/PoolSelector');
 const { Pool } = require('pg');
+const jwt = require("jsonwebtoken");
 
 const pool = new Pool({
     host: "containers-us-west-35.railway.app",
@@ -27,8 +28,37 @@ router.post('/dropoff', async (req, res) => {
     
   //authenticate user
   const jwtuser = await jwt.verify(token, "secret-key-studybuddies")
-  parentEmail = jwtuser.username;
+  username = jwtuser.username;
 
+  //get parentemail from username
+      query7 =
+      'SELECT "ParentsEmailAddress" FROM "Parent", "Client" WHERE "Parent"."Client_ID" = "Client"."Client_ID" AND "Username" = \'' +
+      username +
+      "'";
+    console.log(query7);
+    await pool.query(query7, (err, res) => {
+      if (err) {
+        console.log(err.stack);
+      } else {
+        console.log(res.rows[0]);
+        parentEmail = res.rows[0].ParentEmail;
+      }
+    });
+
+    // promise
+    pool
+      .query(query7)
+      .then((res) => console.log(res.rows[0]))
+      .catch((e) => console.error(e.stack));
+
+    // async/await
+    try {
+      const res = await pool.query(query7);
+      console.log(res.rows[0]);
+      rows = res.rows[0];
+    } catch (err) {
+      //console.log(err.stack)
+    }
 
   //const values2 = [ran, firstName, lastName, parentEmail, day, time];
     
