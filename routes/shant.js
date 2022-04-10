@@ -18,7 +18,7 @@ router.post("/student", async (req, res) => {
   const {
     firstName,
     lastName,
-    phoneNumber,
+    //phoneNumber,
     email,
     birthdate,
     gender,
@@ -53,39 +53,67 @@ router.post("/student", async (req, res) => {
     .catch((e) => console.error(e.stack));
 
   //query
-  const text7 =
-    'INSERT INTO "Student" ("Student_ID","Parent_ID","FirstName","LastName","StudentEmailAddress", "BirthDate", "Gender", "Allergies", "Grade") VALUES((SELECT MAX("Student_ID")+1 FROM "Student"), $1, $2, $3, $4, $5, $6, $7, $8)';
-  const values7 = [
-    parentID,
-    firstName,
-    lastName,
-    email,
-    birthdate,
-    gender,
-    allergies,
-    grade,
-  ];
-  await pool.query(text7, values7, (err, res) => {
+  // const text7 =
+  //   'INSERT INTO "Student" ("Student_ID","Parent_ID","FirstName","LastName","StudentEmailAddress", "BirthDate", "Gender", "Allergies", "Grade") VALUES((SELECT MAX("Student_ID")+1 FROM "Student"), $1, $2, $3, $4, $5, $6, $7, $8)';
+  // const values7 = [
+  //   parentID,
+  //   firstName,
+  //   lastName,
+  //   email,
+  //   birthdate,
+  //   gender,
+  //   allergies,
+  //   grade,
+  // ];
+  // await pool.query(text7, values7, (err, res) => {
+  //   if (err) {
+  //     //console.log(err.stack)
+  //   } else {
+  //     console.log(res.rows[0]);
+  //   }
+  // });
+  // // promise
+  // await pool
+  //   .query(text7, values7)
+  //   .then((res) => {
+  //     console.log(res.rows[0]);
+  //   })
+  //   .catch((e) => console.error(e.stack));
+  // // async/await
+  // try {
+  //   const res = await pool.query(text7, values7);
+  //   console.log(res.rows[0]);
+  // } catch (err) {
+  //   //console.log(err.stack)
+  // }
+
+  const query8 = {
+    text:  'INSERT INTO "Student" ("Student_ID","Parent_ID","FirstName","LastName","StudentEmailAddress", "BirthDate", "Gender", "Allergies", "Grade") VALUES((SELECT MAX("Student_ID")+1 FROM "Student"), $1, $2, $3, $4, $5, $6, $7, $8)',
+    values: [
+      parentID,
+      firstName,
+      lastName,
+      email,
+      birthdate,
+      gender,
+      allergies,
+      grade,
+    ],
+  };
+  // callback
+  pool.query(query8, (err, res) => {
     if (err) {
-      //console.log(err.stack)
+      console.log(err.stack);
     } else {
       console.log(res.rows[0]);
     }
   });
   // promise
   await pool
-    .query(text7, values7)
-    .then((res) => {
-      console.log(res.rows[0]);
-    })
+    .query(query8)
+    .then((res) => console.log(res.rows[0]))
     .catch((e) => console.error(e.stack));
-  // async/await
-  try {
-    const res = await pool.query(text7, values7);
-    console.log(res.rows[0]);
-  } catch (err) {
-    //console.log(err.stack)
-  }
+
 
   res.json({
     message: "True",
