@@ -223,7 +223,6 @@ router.post("/enrollment", async (req, res) => {
 //dashboard route
 router.post("/dashboard", async (req, res) => {
   const { type, Token } = req.body;
-  res.writeHead(200, { "Access-Control-Allow-Origin": "*" });
 
   console.log("REQ");
 
@@ -316,7 +315,6 @@ router.post("/dashboard", async (req, res) => {
 //account info route
 router.post("/accountinfo", async (req, res) => {
   const { token } = req.body;
-  res.writeHead(200, { "Access-Control-Allow-Origin": "*" });
 
   //authenticate user, get username
   const jwtuser = await jwt.verify(token, "secret-key-studybuddies");
