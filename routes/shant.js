@@ -142,6 +142,7 @@ router.post('/enrollment', async (req, res) => {
     const {
         firstName,
         lastName,
+        email,
         Token,
         course: {
             serviceType,
@@ -156,14 +157,20 @@ router.post('/enrollment', async (req, res) => {
     const jwtuser = await jwt.verify(Token, "secret-key-studybuddies")
 
     //get student id
+    // const query1 = {
+    //     text: 'SELECT "Student_ID" FROM "Student" WHERE "FirstName" = $1 AND "LastName" = $2',
+    //     values: [firstName, lastName],
+    // }
+
     const query1 = {
-        text: 'SELECT "Student_ID" FROM "Student" WHERE "FirstName" = $1 AND "LastName" = $2',
-        values: [firstName, lastName],
+        text: 'SELECT "Student_ID" FROM "Student" WHERE "StudentEmailAddress" = $1',
+        values: [email],
     }
     // callback
     pool.query(query1, (err, res) => {
         if (err) {
             console.log(err.stack)
+            studentID = res.rows[0].Student_ID;
         } else {
             console.log(res.rows[0]);
             studentID = res.rows[0].Student_ID;
@@ -342,7 +349,7 @@ router.post('/accountinfo', async (req, res) => {
 
     //get student names
     const query6 = {
-        text: 'SELECT "Student"."FirstName" FROM "Student" JOIN "Parent" USING("Parent_ID") WHERE "ParentsEmailAddress" = $1',
+        text: 'SELECT "Student"."FirstName", "StudentEmailAddress" FROM "Student" JOIN "Parent" USING("Parent_ID") WHERE "ParentsEmailAddress" = $1',
         values: [username],
     }
     // callback
