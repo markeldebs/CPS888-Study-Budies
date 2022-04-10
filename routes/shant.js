@@ -89,9 +89,9 @@ router.post('/student', async (req, res) => {
 //course search route 
 router.post('/courseSearch', async (req, res) => {
     const {
-        isPaid,
-        isOnline,
-        isGroup,
+        // isPaid,
+        // isOnline,
+        // isGroup,
         grade,
         subject,
         token
@@ -100,13 +100,13 @@ router.post('/courseSearch', async (req, res) => {
     //authenticate user
     const jwtuser = await jwt.verify(token, "secret-key-studybuddies")
 
-    if (isPaid == true) { isPaids = "Paid"; } else { isPaids = "Free"; }
-    if (isOnline == true) { isOnlines = "Online"; } else { isOnlines = "In Person"; }
-    if (isGroup == true) { isGroups = "Group"; } else { isGroups = "Solo"; }
+    // if (isPaid == true) { isPaids = "Paid"; } else { isPaids = "Free"; }
+    // if (isOnline == true) { isOnlines = "Online"; } else { isOnlines = "In Person"; }
+    // if (isGroup == true) { isGroups = "Group"; } else { isGroups = "Solo"; }
 
     const text8 =
-        'SELECT * FROM "ClassesAvailable" WHERE "TutoringService" = $1 AND "Subject" = $2 AND "ServiceForm" = $3 AND "PackageChosen" = $4';
-    const values8 = [isPaids, subject, isOnlines, isGroups];
+        'SELECT * FROM "ClassesAvailable" WHERE "Grade" = $1 AND "Subject" = $2';
+    const values8 = [grade, subject];
     console.log(text8, values8)
 
     await pool.query(text8, values8, (err, res) => {
@@ -140,8 +140,8 @@ router.post('/courseSearch', async (req, res) => {
 //enrollment route 
 router.post('/enrollment', async (req, res) => {
     const {
-        firstName,
-        lastName,
+        // firstName,
+        // lastName,
         email,
         Token,
         course: {
@@ -149,6 +149,7 @@ router.post('/enrollment', async (req, res) => {
             subject,
             isOnline,
             isGroup,
+            grade,
             timings
         }
     } = req.body
@@ -157,11 +158,6 @@ router.post('/enrollment', async (req, res) => {
     const jwtuser = await jwt.verify(Token, "secret-key-studybuddies")
 
     //get student id
-    // const query1 = {
-    //     text: 'SELECT "Student_ID" FROM "Student" WHERE "FirstName" = $1 AND "LastName" = $2',
-    //     values: [firstName, lastName],
-    // }
-
     const query1 = {
         text: 'SELECT "Student_ID" FROM "Student" WHERE "StudentEmailAddress" = $1',
         values: [email],
@@ -189,8 +185,8 @@ router.post('/enrollment', async (req, res) => {
 
     //query
     const query = {
-        text: 'INSERT INTO "SubjectRegistration" ("Registration_ID","Student_ID","TutoringService","Subject","ServiceForm","PackageChosen","AvailableTimeSlots") VALUES((SELECT MAX("Registration_ID")+1 FROM "SubjectRegistration"), $1, $2, $3, $4, $5, $6)',
-        values: [studentID, serviceType, subject, isOnlines, isGroups, timings],
+        text: 'INSERT INTO "SubjectRegistration" ("Registration_ID","Student_ID","TutoringService","Subject","ServiceForm","PackageChosen","AvailableTimeSlots", "Grade") VALUES((SELECT MAX("Registration_ID")+1 FROM "SubjectRegistration"), $1, $2, $3, $4, $5, $6, $7)',
+        values: [studentID, serviceType, subject, isOnlines, isGroups, timings, grade],
     }
     // callback
     pool.query(query, (err, res) => {
@@ -250,10 +246,9 @@ router.post('/dashboard', async (req, res) => {
 
 
 
-
         //get results
         const query3 = {
-            text: 'SELECT "FirstName", "LastName", "Subject", "ServiceForm", "PackageChosen", "AvailableTimeSlots" FROM "Student" JOIN "SubjectRegistration" USING ("Student_ID") WHERE "Parent_ID" = $1',
+            text: 'SELECT "FirstName", "LastName", "Subject", "ServiceForm", "PackageChosen", "AvailableTimeSlots", "Grade" FROM "Student" JOIN "SubjectRegistration" USING ("Student_ID") WHERE "Parent_ID" = $1',
             values: [parentID],
         }
         // callback
@@ -282,7 +277,7 @@ router.post('/dashboard', async (req, res) => {
 
         //get results
         const query4 = {
-            text: 'SELECT "TutoringService", "Subject", "ServiceForm", "PackageChosen", "AvailableSlots"  FROM "ClassesAvailable" JOIN "TutorClassesRegistration" USING("ClassesAvailable_ID") JOIN "Tutor" USING ("Tutor_ID") WHERE "Tutor_Email" = $1',
+            text: 'SELECT "TutoringService", "Subject", "ServiceForm", "PackageChosen", "AvailableSlots", "Grade"  FROM "ClassesAvailable" JOIN "TutorClassesRegistration" USING("ClassesAvailable_ID") JOIN "Tutor" USING ("Tutor_ID") WHERE "Tutor_Email" = $1',
             values: [tutorEmail],
         }
         // callback
@@ -313,13 +308,13 @@ router.post('/dashboard', async (req, res) => {
     }
 });
 
-//course search route 
+//account info route 
 router.post('/accountinfo', async (req, res) => {
     const {
         token
     } = req.body
 
-    //authenticate user
+    //authenticate user, get username
     const jwtuser = await jwt.verify(token, "secret-key-studybuddies")
     username = jwtuser.username
 
@@ -374,30 +369,5 @@ router.post('/accountinfo', async (req, res) => {
         students
     })
 });
-
-// //testing route
-// router.post("/test", async (req, res) => {
-//   // callback
-
-//   query7 = 'SELECT "Parent_ID" FROM \"Parent\", \"Client\" WHERE \"Parent\".\"Client_ID\" = \"Client\".\"Client_ID\" AND \"Username\" = \'test@test.com\'';
-//   console.log(query7);
-//   await pool.query(query7, (err, res) => {
-//     if (err) {
-//       console.log(err.stack);
-//     } else {
-//       console.log(res.rows[0]);
-//     }
-//   });
-//   // promise
-//   pool
-//     .query(query7)
-//     .then((res) => console.log(res.rows[0]))
-//     .catch((e) => console.error(e.stack));
-
-//     res.json({
-//         message: "private message"
-//     })
-
-// });
 
 module.exports = router;
