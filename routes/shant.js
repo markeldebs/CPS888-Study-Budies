@@ -244,10 +244,13 @@ router.post("/dashboard", async (req, res) => {
     pool.query(query2, (err, res) => {
       if (err) {
         console.log(err.stack);
+        parentID = res.rows[0].Parent_ID;
       } else {
         console.log(res.rows[0]);
         parentID = res.rows[0].Parent_ID;
       }
+      parentID = res.rows[0].Parent_ID;
+
     });
     // promise
     await pool
@@ -257,7 +260,7 @@ router.post("/dashboard", async (req, res) => {
 
     //get results
     const query3 = {
-      text: 'SELECT "FirstName", "LastName", "Subject", "ServiceForm", "PackageChosen", "AvailableTimeSlots", "Grade" FROM "Student" JOIN "SubjectRegistration" USING ("Student_ID") WHERE "Parent_ID" = $1',
+      text: 'SELECT "FirstName", "LastName", "Subject", "ServiceForm", "PackageChosen", "AvailableTimeSlots", "SubjectRegistration"."Grade" FROM "Student" JOIN "SubjectRegistration" USING ("Student_ID") WHERE "Parent_ID" = $1',
       values: [parentID],
     };
     // callback
