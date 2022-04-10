@@ -216,6 +216,7 @@ router.post("/signup", async (req, res) => {
 // Login Route
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
+  res.writeHead(200, { "Access-Control-Allow-Origin": "*" });
 
   //query
   const text4 =
