@@ -186,16 +186,17 @@ router.post('/enrollment', async (req, res) => {
 //dashboard route 
 router.post('/dashboard', async (req, res) => {
     const {
-        parentEmail,
-        tutorEmail,
-        Token,
+        type,
+        Token
     } = req.body
 
     //authenticate user
     const jwtuser = await jwt.verify(Token, "secret-key-studybuddies")
+    parentEmail = jwtuser.username;
+    tutorEmail = jwtuser.username;
 
     //parent or tutor
-    if (parentEmail != null) {
+    if (type == "parent") {
         //parent
 
         //get parent id
@@ -247,7 +248,7 @@ router.post('/dashboard', async (req, res) => {
         })
 
 
-    } else if (tutorEmail != null) {
+    } else if (type == "tutor") {
         //tutor
 
         //get results
@@ -281,14 +282,69 @@ router.post('/dashboard', async (req, res) => {
             message: "False"
         })
     }
-
-
-
-
-
 });
 
+//course search route 
+router.post('/accountinfo', async (req, res) => {
+    const {
+        token
+    } = req.body
 
+    //authenticate user
+    const jwtuser = await jwt.verify(token, "secret-key-studybuddies")
+    username = jwtuser.username
+
+
+    //get parent name
+    const query5 = {
+        text: 'SELECT "FirstName", "LastName" FROM "Parent" WHERE "ParentsEmailAddress" = $1',
+        values: [username],
+    }
+    // callback
+    pool.query(query5, (err, res) => {
+        if (err) {
+            console.log(err.stack)
+        } else {
+            console.log(res.rows[0]);
+            parentFirstName = res.rows[0].FirstName;
+            parentLastName = res.rows[0].LastName;
+        }
+    })
+    // promise
+    await pool
+        .query(query5)
+        .then(res => console.log(res.rows[0]))
+        .catch(e => console.error(e.stack))
+
+
+
+    //get student names
+    const query6 = {
+        text: 'SELECT "Student"."FirstName" FROM "Student" JOIN "Parent" USING("Parent_ID") WHERE "ParentsEmailAddress" = $1',
+        values: [username],
+    }
+    // callback
+    pool.query(query6, (err, res) => {
+        if (err) {
+            console.log(err.stack)
+        } else {
+            console.log(res.rows[0]);
+            students = res.rows;
+        }
+    })
+    // promise
+    await pool
+        .query(query6)
+        .then(res => console.log(res.rows[0]))
+        .catch(e => console.error(e.stack))
+
+
+    res.json({
+        parentFirstName,
+        parentLastName,
+        students
+    })
+});
 
 // //testing route
 // router.post("/test", async (req, res) => {
