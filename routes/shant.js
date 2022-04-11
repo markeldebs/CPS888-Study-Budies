@@ -190,7 +190,7 @@ router.post("/enrollment", async (req, res) => {
     values: [email],
   };
   // callback
-  pool.query(query1, (err, res) => {
+  await pool.query(query1, (err, res) => {
     if (err) {
       console.log(err.stack);
       studentID = res.rows[0].Student_ID;
@@ -230,18 +230,13 @@ router.post("/enrollment", async (req, res) => {
     ],
   };
   // callback
-  pool.query(query, (err, res) => {
+  await pool.query(query, (err, res) => {
     if (err) {
       console.log(err.stack);
     } else {
       console.log(res.rows[0]);
     }
   });
-  // promise
-  await pool
-    .query(query)
-    .then((res) => console.log(res.rows[0]))
-    .catch((e) => console.error(e.stack));
 
   res.json({
     message: "True",
