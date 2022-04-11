@@ -158,7 +158,7 @@ router.post("/signup", async (req, res) => {
     } else {
       //insert to tutor, one issue i cant extract client_ID and address_ID
       const text3 =
-        'INSERT INTO "Tutor" ("Tutor_ID", "Client_ID", "FirstName", "LastName", "PhoneNumber", "Tutor_Email", "BirthDate", "Gender", "Address_ID", "PastExperience", "Eligibility", "AgeLimit", "EmployeeType") VALUES((SELECT MAX("Tutor_ID")+1 FROM "Tutor"), (SELECT MAX("Client_ID") FROM "Client"), $1, $2, $3, $4, $5, $6, $7, (SELECT MAX("Address_ID") FROM "Address"), $8, $9, $10, $11)';
+        'INSERT INTO "Tutor" ("Tutor_ID", "Client_ID", "FirstName", "LastName", "PhoneNumber", "Tutor_Email", "BirthDate", "Gender", "Address_ID", "PastExperience", "Eligibility", "AgeLimit", "EmployeeType") VALUES((SELECT MAX("Tutor_ID")+1 FROM "Tutor"), (SELECT MAX("Client_ID") FROM "Client"), $1, $2, $3, $4, $5, $6, $7, (SELECT MAX("Address_ID") FROM "Address"), $8, $9, $10)';
       const values3 = [
         firstName,
         lastName,
