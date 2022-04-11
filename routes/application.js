@@ -51,8 +51,7 @@ router.post('/dropoff', async (req, res) => {
                  // Conditional statement for if first name is Mark
                     console.log("Dropped Off")
                     //res.setHeader('55', 'Status')
-                    res.send({ message: "Dropped Off" })
-                    
+                    res.send({ message: "Dropped Off  " + ran })                    
                         console.log(err);
                         //res.setHeader('55', 'Status')
                         console.log("Student not found")
