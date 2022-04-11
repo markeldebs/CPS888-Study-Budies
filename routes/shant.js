@@ -88,7 +88,7 @@ router.post("/student", async (req, res) => {
   // }
 
   const query8 = {
-    text:  'INSERT INTO "Student" ("Student_ID","Parent_ID","FirstName","LastName","StudentEmailAddress", "BirthDate", "Gender", "Allergies", "Grade") VALUES((SELECT MAX("Student_ID")+1 FROM "Student"), $1, $2, $3, $4, $5, $6, $7, $8)',
+    text: 'INSERT INTO "Student" ("Student_ID","Parent_ID","FirstName","LastName","StudentEmailAddress", "BirthDate", "Gender", "Allergies", "Grade") VALUES((SELECT MAX("Student_ID")+1 FROM "Student"), $1, $2, $3, $4, $5, $6, $7, $8)',
     values: [
       parentID,
       firstName,
@@ -253,6 +253,7 @@ router.post("/dashboard", async (req, res) => {
   const jwtuser = await jwt.verify(Token, "secret-key-studybuddies");
   parentEmail = jwtuser.username;
   tutorEmail = jwtuser.username;
+  console.log(tutorEmail);
 
   //parent or tutor
   if (type == "parent") {
@@ -307,6 +308,27 @@ router.post("/dashboard", async (req, res) => {
   } else if (type == "tutor") {
     //tutor
 
+    //get tutor name
+    const query10 = {
+      text: 'SELECT "FirstName", "LastName" FROM "Tutor" WHERE "Tutor_Email" = $1',
+      values: [tutorEmail],
+    };
+    // callback
+    pool.query(query10, (err, res) => {
+      if (err) {
+        console.log(err.stack);
+      } else {
+        console.log(res.rows[0]);
+        tutorFirstName = res.rows[0].FirstName;
+        tutorLastName = res.rows[0].LastName;
+      }
+    });
+    // promise
+    await pool
+      .query(query10)
+      .then((res) => console.log(res.rows[0]))
+      .catch((e) => console.error(e.stack));
+
     //get results
     const query4 = {
       text: 'SELECT "TutoringService", "Subject", "ServiceForm", "PackageChosen", "AvailableSlots", "Grade"  FROM "ClassesAvailable" JOIN "TutorClassesRegistration" USING("ClassesAvailable_ID") JOIN "Tutor" USING ("Tutor_ID") WHERE "Tutor_Email" = $1',
@@ -328,6 +350,8 @@ router.post("/dashboard", async (req, res) => {
       .catch((e) => console.error(e.stack));
 
     res.json({
+      tutorFirstName,
+      tutorLastName,
       scheduledSessions,
     });
   } else {
