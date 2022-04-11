@@ -110,12 +110,14 @@ router.post('/pickup', async (req, res) => {
             }
             if (release == 1 ){                    
             //res.setHeader('55', 'Status')
-            res.send({ message: "Student released" })
+            //res.send({ message: "Student released" })
+            res.send(true)
             release = 0;
             }
             else {
                 //res.send({message: "Wrong Code"})
-                res.send({message: "Student not found"});
+                //res.send({message: "Student not found"});
+                res.send(false)
             }
         }
     }) 
