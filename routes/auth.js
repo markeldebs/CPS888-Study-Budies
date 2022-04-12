@@ -99,22 +99,6 @@ router.post("/signup", async (req, res) => {
       }
     });
 
-    //addressid
-    const text11 =
-      'SELECT * FROM "Address" WHERE "Home Address" = $1';
-    const values11 = [address];
-    // callback
-    console.log(text11,values11);
-    await pool.query(text11, values11, (err, res) => {
-      if (err) {
-        console.log(err.stack)
-        AddressID = res.rows[0].Address_ID;
-      } else {
-        console.log(res.rows[0]);
-        AddressID = res.rows[0].Address_ID;
-      }
-    });
-
     //check for parent/tutor
     if (type == "parent") {
       //insert to parent, one issue i cant extract client_ID and address_ID
@@ -144,6 +128,29 @@ router.post("/signup", async (req, res) => {
         //console.log(err.stack)
       }
     } else {
+
+      //addressid
+      const query11 = {
+        text: 'SELECT "Address_ID" FROM "Address" WHERE "Home Address" = $1 AND "PostalCode" = $2',
+        values: [address, postalCode],
+      };
+      // callback
+      pool.query(query11, (err, res) => {
+        if (err) {
+          console.log(err.stack);
+          AddressID = res.rows[0].Address_ID;
+        } else {
+          console.log(res.rows[0]);
+          AddressID = res.rows[0].Address_ID;
+        }
+        AddressID = res.rows[0].Address_ID;
+      });
+      // promise
+      await pool
+        .query(query11)
+        .then((res) => console.log(res.rows[0]))
+        .catch((e) => console.error(e.stack));
+
       //insert to tutor, one issue i cant extract client_ID and address_ID
       const text3 =
         'INSERT INTO "Tutor" ("Tutor_ID", "Client_ID", "FirstName", "LastName", "PhoneNumber", "Tutor_Email", "BirthDate", "Gender", "Address_ID", "PastExperience", "Eligibility", "AgeLimit", "EmployeeType") VALUES((SELECT MAX("Tutor_ID")+1 FROM "Tutor"), (SELECT MAX("Client_ID") FROM "Client"), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)';
@@ -161,13 +168,17 @@ router.post("/signup", async (req, res) => {
         isPaid,
       ];
       // callback
-      await pool.query(text3, values3, (err, res) => {
+      pool.query(text3, values3, (err, res) => {
         if (err) {
           //console.log(err.stack)
         } else {
           console.log(res.rows[0]);
         }
       });
+      await pool
+      .query(text3, values3)
+      .then((res) => console.log(res.rows[0]))
+      .catch((e) => console.error(e.stack));
     }
 
     //create token
