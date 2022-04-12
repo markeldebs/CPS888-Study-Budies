@@ -37,7 +37,7 @@ router.post("/student", async (req, res) => {
     values: [username],
   };
   // callback
-  pool.query(query7, (err, res) => {
+  await pool.query(query7, (err, res) => {
     if (err) {
       console.log(err.stack);
       parentID = res.rows[0].Parent_ID;
@@ -108,12 +108,6 @@ router.post("/student", async (req, res) => {
       console.log(res.rows[0]);
     }
   });
-  // promise
-  await pool
-    .query(query8)
-    .then((res) => console.log(res.rows[0]))
-    .catch((e) => console.error(e.stack));
-
 
   res.json({
     message: "True",

@@ -85,20 +85,6 @@ router.post("/signup", async (req, res) => {
         console.log(res.rows[0]);
       }
     });
-    // promise
-    await pool
-      .query(text, values)
-      .then((res) => {
-        console.log(res.rows[0]);
-      })
-      .catch((e) => console.error(e.stack));
-    // async/await
-    try {
-      const res = await pool.query(text, values);
-      console.log(res.rows[0]);
-    } catch (err) {
-      //console.log(err.stack)
-    }
 
     //insert to address
     const text1 =
@@ -112,20 +98,22 @@ router.post("/signup", async (req, res) => {
         console.log(res.rows[0]);
       }
     });
-    // promise
-    pool
-      .query(text1, values1)
-      .then((res) => {
+
+    //addressid
+    const text11 =
+      'SELECT * FROM "Address" WHERE "Home Address" = $1';
+    const values11 = [address];
+    // callback
+    console.log(text11,values11);
+    await pool.query(text11, values11, (err, res) => {
+      if (err) {
+        console.log(err.stack)
+        AddressID = res.rows[0].Address_ID;
+      } else {
         console.log(res.rows[0]);
-      })
-      .catch((e) => console.error(e.stack));
-    // async/await
-    try {
-      const res = await pool.query(text1, values1);
-      console.log(res.rows[0]);
-    } catch (err) {
-      //console.log(err.stack)
-    }
+        AddressID = res.rows[0].Address_ID;
+      }
+    });
 
     //check for parent/tutor
     if (type == "parent") {
@@ -158,7 +146,7 @@ router.post("/signup", async (req, res) => {
     } else {
       //insert to tutor, one issue i cant extract client_ID and address_ID
       const text3 =
-        'INSERT INTO "Tutor" ("Tutor_ID", "Client_ID", "FirstName", "LastName", "PhoneNumber", "Tutor_Email", "BirthDate", "Gender", "Address_ID", "PastExperience", "Eligibility", "AgeLimit", "EmployeeType") VALUES((SELECT MAX("Tutor_ID")+1 FROM "Tutor"), (SELECT MAX("Client_ID") FROM "Client"), $1, $2, $3, $4, $5, $6, $7, (SELECT MAX("Address_ID") FROM "Address"), $8, $9, $10)';
+        'INSERT INTO "Tutor" ("Tutor_ID", "Client_ID", "FirstName", "LastName", "PhoneNumber", "Tutor_Email", "BirthDate", "Gender", "Address_ID", "PastExperience", "Eligibility", "AgeLimit", "EmployeeType") VALUES((SELECT MAX("Tutor_ID")+1 FROM "Tutor"), (SELECT MAX("Client_ID") FROM "Client"), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)';
       const values3 = [
         firstName,
         lastName,
@@ -166,6 +154,7 @@ router.post("/signup", async (req, res) => {
         email,
         birthdate,
         gender,
+        AddressID,
         wasTutor,
         eligibleToWork,
         over18,
@@ -179,20 +168,6 @@ router.post("/signup", async (req, res) => {
           console.log(res.rows[0]);
         }
       });
-      // promise
-      pool
-        .query(text3, values3)
-        .then((res) => {
-          console.log(res.rows[0]);
-        })
-        .catch((e) => console.error(e.stack));
-      // async/await
-      try {
-        const res = await pool.query(text3, values3);
-        console.log(res.rows[0]);
-      } catch (err) {
-        //console.log(err.stack)
-      }
     }
 
     //create token
