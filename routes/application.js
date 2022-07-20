@@ -2,12 +2,15 @@
 const { RANDOM } = require("mysql/lib/PoolSelector");
 const { Pool } = require("pg");
 
+require('dotenv').config()
+
 const pool = new Pool({
-  host: "containers-us-west-35.railway.app",
-  user: "postgres",
-  database: "railway",
-  password: "d4gnyl9NtBe4P2q1Utxm",
-  port: "6637",
+  //host: "containers-us-west-35.railway.app",
+  host:process.env.API_KEY_HOST,
+  user:process.env.API_KEY_user,
+  database:process.env.API_KEY_database,
+  password:process.env.API_KEY_password,
+  port:process.env.API_KEY_port,
 });
 
 const router = require("express").Router();
@@ -86,13 +89,13 @@ router.post("/pickup", async (req, res) => {
           release = 1;
           break;
         } else {
-          console.log(err);
+          //console.log(err);
           //res.setHeader('55', 'Status')
           console.log("Student not found");
           //res.send({message: "Wrong Code"})
           //res.send({message: "Student not found"});
           release = 0;
-          //break;
+          break;
         }
       }
       if (release == 1) {
